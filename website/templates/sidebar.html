@@ -1,0 +1,45 @@
+<div class="sidebar-menu">
+    <ul id="accordion-menu">
+        <li>
+            <a href="{{url_for('views.home')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi bi-grid-1x2"></span><span class="mtext">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{url_for('views.document_type')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi-folder2"></span><span class="mtext">Document Types</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{url_for('views.docs')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi-folder-plus"></span><span class="mtext">Documents</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{url_for('views.task')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi-list-task"></span><span class="mtext">Tasks</span>
+            </a>
+        </li>
+        <li>
+            <div class="dropdown-divider"></div>
+        </li>
+        <li>
+            <div class="sidebar-small-cap">User Mangement</div>
+        </li>
+        <li>
+            <a href="{{url_for('auth.profile')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi-file-person"></span><span class="mtext">Profile</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{url_for('auth.users')}}" class="dropdown-toggle no-arrow">
+                <span class="micon bi bi-person"></span><span class="mtext">Users</span>
+            </a>
+        </li>
+        <li class="mt-4">
+            <a href="{{url_for('auth.logout')}}" class="dropdown-toggle no-arrow">
+                <span class="micon dw dw-logout"></span><span class="mtext">Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
