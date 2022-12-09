@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav mr-lg-2">
+            <li class="nav-item ml-0">
+                <h4 class="mb-0">Profile</h4>
+            </li>
+            <li class="nav-item">
+                <div class="d-flex align-items-baseline">
+                    <p class="mb-0">Dashboard</p>
+                    <i class="typcn typcn-chevron-right"></i>
+                    <p class="mb-0">Profile</p>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-search d-none d-md-block mr-0">
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-12">
+        <div class="card card-box">
+            <div class="card-header">Sign Language Detection</div>
+            <div class="card-body">
+                <form class="form form-horizontal" method="POST">
+                    <div class="row">
+                        <img src="{{ url_for('detect.video') }}" width="100%" height="50%" style="border:1px solid black;" />
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 flask-mysqldb
 flask-login
 Werkzeug
+opencv-python
