@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for, Response
+from flask_login import current_user
 from werkzeug.utils import secure_filename
 import cv2
 import os
@@ -45,7 +46,7 @@ def generate_frames():
             print("not");
             break
         else:
-            im2 = crop_image(image_frame, 300,300,300,300)
+            im2 = crop_image(image_frame, 100,100,300,300)
             image_grayscale = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
     
             image_grayscale_blurred = cv2.GaussianBlur(image_grayscale, (15,15), 0)
@@ -60,10 +61,10 @@ def generate_frames():
             print(curr)
             # text_out += curr
 
-            cv2.putText(image_frame, curr, (700, 300), cv2.FONT_HERSHEY_COMPLEX, 4.0, (255, 255, 255), lineType=cv2.LINE_AA)
+            cv2.putText(image_frame, curr, (10, 300), cv2.FONT_HERSHEY_COMPLEX, 4.0, (255, 255, 255), lineType=cv2.LINE_AA)
+            #cv2.imshow("Image Resize", image_grayscale_blurred)
 
-
-            cv2.rectangle(image_frame, (300, 300), (600, 600), (255, 255, 00), 3)
+            cv2.rectangle(image_frame, (100, 100), (300, 300), (255, 255, 00), 3)
             ret,buffer=cv2.imencode('.jpg',image_frame)
             image_frame=buffer.tobytes()
 
@@ -72,7 +73,7 @@ def generate_frames():
 
 @detect.route('/detect', methods=['GET', 'POST'])
 def detects():
-    return render_template("detect.html")
+    return render_template("detect.html",user=current_user)
 
 @detect.route('/video')
 def video():

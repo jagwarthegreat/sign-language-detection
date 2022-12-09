@@ -4,3 +4,6 @@ flask-mysqldb
 flask-login
 Werkzeug
 opencv-python
+keras
+tensorflow
+scikit-image
