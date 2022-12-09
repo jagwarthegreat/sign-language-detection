@@ -1,109 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <!-- Basic Page Info -->
-  <meta charset="utf-8" />
-  <title>ADMS</title>
-
-  <!-- Site favicon -->
-  <link rel="apple-touch-icon" sizes="180x180"
-    href="{{ url_for('static', filename='vendors/images/apple-touch-icon.png') }}" />
-  <link rel="icon" type="image/png" sizes="32x32"
-    href="{{ url_for('static', filename='vendors/images/favicon-32x32.png') }}" />
-  <link rel="icon" type="image/png" sizes="16x16"
-    href="{{ url_for('static', filename='vendors/images/favicon-16x16.png') }}" />
-
-  <!-- Mobile Specific Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <!-- CSS -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/styles/core.css') }}" />
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/styles/icon-font.min.css') }}" />
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/styles/style.css') }}" />
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>SLD</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendors/typicons/typicons.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendors/css/vendor.bundle.base.css') }}">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/vertical-layout-light/style.css') }}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/favicon.png') }}" />
 </head>
 
-<body class="login-page">
-  <div class="login-wrap d-flex align-items-center flex-wrap justify-content-center">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6 col-lg-7">
-          <img src="{{ url_for('static', filename='vendors/images/login-page-img.png') }}" alt="" />
-        </div>
-        <div class="col-md-6 col-lg-5">
-          <div class="login-box bg-white box-shadow border-radius-10">
-            <div class="login-title">
-              <h2 class="text-center text-primary">Login To ADMS</h2>
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo">
+                <h2>Sign Language Detection</h2>
+              </div>
+              <h4>Hello! let's get started</h4>
+              <h6 class="font-weight-light">Sign in to continue.</h6>
+              <form class="pt-3" method="POST">
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg" id="username" placeholder="Username"
+                    name="username">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg" id="password" placeholder="Password"
+                    name="password">
+                </div>
+                {% include "response.html" %}
+                <div class="mt-3">
+                  <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN
+                    IN</button>
+                </div>
+              </form>
             </div>
-            <form method="POST">
-              <div class="input-group custom">
-                <input type="text" class="form-control form-control-lg" placeholder="Username" name="username" />
-                <div class="input-group-append custom">
-                  <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
-                </div>
-              </div>
-              <div class="input-group custom">
-                <input type="password" class="form-control form-control-lg" placeholder="**********" name="password" />
-                <div class="input-group-append custom">
-                  <span class="input-group-text"><i class="dw dw-padlock1"></i></span>
-                </div>
-              </div>
-              <div class="row pb-30">
-                <div class="col-12">
-                  {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                  {% for category, message in messages %}
-                  {% if category == 'error' %}
-                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  {% else %}
-                  <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  {% endif %}
-                  {% endfor %}
-                  {% endif %}
-                  {% endwith %}
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="input-group mb-0">
-                    <!--
-                      use code for form submit
-                      <input class="btn btn-primary btn-lg btn-block" type="submit" value="Sign In">
-                    -->
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
-                  </div>
-                </div>
-              </div>
-            </form>
           </div>
         </div>
       </div>
+      <!-- content-wrapper ends -->
     </div>
+    <!-- page-body-wrapper ends -->
   </div>
-
-  <!-- js -->
-  <script src="{{ url_for('static', filename='vendors/scripts/core.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/scripts/script.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/scripts/process.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/scripts/layout-settings.js') }}"></script>
-
-  <script src="{{ url_for('static', filename='src/plugins/sweetalert2/sweetalert2.all.js') }}"></script>
-  <link rel="stylesheet" type="text/css"
-    href="{{ url_for('static', filename='src/plugins/sweetalert2/sweetalert2.css') }}" />
-  <script src="{{ url_for('static', filename='src/plugins/sweetalert2/sweet-alert.init.js') }}"></script>
+  <!-- container-scroller -->
+  <!-- base:js -->
+  <script src="{{ url_for('static', filename='assets/vendors/js/vendor.bundle.base.js') }}"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="{{ url_for('static', filename='assets/js/off-canvas.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/hoverable-collapse.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/template.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/settings.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/todolist.js') }}"></script>
+  <!-- endinject -->
 </body>
 
 </html>

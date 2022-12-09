@@ -1,73 +1,72 @@
 {% extends "base.html" %}
 {% block title %}Users{% endblock %}
 
+{% block breadcrumbs %}
+<nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav mr-lg-2">
+            <li class="nav-item ml-0">
+                <h4 class="mb-0">Users</h4>
+            </li>
+            <li class="nav-item">
+                <div class="d-flex align-items-baseline">
+                    <p class="mb-0">Dashboard</p>
+                    <i class="typcn typcn-chevron-right"></i>
+                    <p class="mb-0">Users</p>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-search d-none d-md-block mr-0">
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
 {% block content %}
-<div class="page-header">
-    <div class="row">
-        <div class="col-md-12 col-sm-12">
-            <div class="title">
-                <h4>Users</h4>
-            </div>
-            <nav aria-label="breadcrumb" role="navigation">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="{{url_for('views.home')}}">Home</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        Users
-                    </li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-</div>
-
 <!-- Simple Datatable start -->
-<div class="card-box mb-30">
-    <div class="pd-20 d-flex justify-content-between">
-        <h4 class="text-dark h4">Manage User Data</h4>
-        <a href="#" class="btn icon icon-left btn-primary btn-sm" data-toggle="modal" data-target="#addUserModal">
-            <i class="bi bi-plus-lg"></i>
-            Add User
-        </a>
-    </div>
-    <div class="pb-20">
-        <table class="data-table table stripe hover nowrap">
-            <thead>
-                <tr>
-                    <th class="table-plus datatable-nosort">#</th>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Category</th>
-                    <th class="datatable-nosort">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td class="table-plus">{{ user.fname +" "+ user.mname + " " + user.lname }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.category }}</td>
-                    <td>
-                        <div class="dropdown">
-                            <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#"
-                                role="button" data-toggle="dropdown">
-                                <i class="dw dw-more"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                <a class="dropdown-item" href="#" onClick="deleteUser({{ user.id }})">
-                                    <i class="bi bi-trash3"></i>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card flex-column">
+        <div class="card-box mb-30">
+            <div class="pd-20 d-flex justify-content-between mb-3">
+                <h4 class="text-dark h4">Manage User Data</h4>
+                <a href="#" class="btn icon icon-left btn-primary btn-sm" data-toggle="modal"
+                    data-target="#addUserModal">
+                    <i class="bi bi-plus-lg"></i>
+                    Add User
+                </a>
+            </div>
+            <div class="pb-20">
+                <table class="data-table table stripe hover nowrap" id="order-listing">
+                    <thead>
+                        <tr>
+                            <th class="table-plus datatable-nosort">#</th>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Category</th>
+                            <th class="datatable-nosort">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td class="table-plus">{{ user.fname +" "+ user.mname + " " + user.lname }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.category }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onClick="deleteUser({{ user.id }})">
                                     Delete
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
 
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Simple Datatable End -->
@@ -139,7 +138,7 @@
 
 <script>
     function deleteUser(userId) {
-        swal({
+        swal.fire({
             title: "Are you sure?",
             text: "Are you sure you want to delete this item?",
             icon: "warning",
@@ -165,6 +164,6 @@
     }
 </script>
 
-<script src="{{ url_for('static', filename='vendors/scripts/datatable-setting.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/data-table.js') }}"></script>
 <!-- Basic Tables end -->
 {% endblock %}
