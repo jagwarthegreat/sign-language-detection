@@ -1,79 +1,112 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for, Response
 from flask_login import current_user
 from werkzeug.utils import secure_filename
-import cv2
-import os
-import numpy as np
-from keras.models import load_model
-from skimage.transform import resize, pyramid_reduce
-import PIL
-from PIL import Image
+
+from function import *
+from keras.utils import to_categorical
+from keras.models import model_from_json
+from keras.layers import LSTM, Dense
+from keras.callbacks import TensorBoard
+
 
 detect = Blueprint('detect', __name__)
 
-model = load_model('CNNmodel.h5')
+json_file = open("model.json", "r")
+model_json = json_file.read()
+json_file.close()
+model = model_from_json(model_json)
+model.load_weights("model.h5")
 
-camera=cv2.VideoCapture(0)
 
-def prediction(pred):
-    return(chr(pred+ 65))
+colors = []
+for i in range(0,20):
+    colors.append((245,117,16))
 
+def prob_viz(res, actions, input_frame, colors,threshold):
+    output_frame = input_frame.copy()
+    for num, prob in enumerate(res):
+        cv2.rectangle(output_frame, (0,60+num*40), (int(prob*100), 90+num*40), colors[num], -1)
+        cv2.putText(output_frame, actions[num], (0, 85+num*40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
+        
+    return output_frame
 
-def keras_predict(model, image):
-    data = np.asarray( image, dtype="int32" )
-    
-    pred_probab = model.predict(data)[0]
-    pred_class = list(pred_probab).index(max(pred_probab))
-    return max(pred_probab), pred_class
+# 1. New detection variables
+sequence = []
+sentence = []
+accuracy=[]
+predictions = []
+threshold = 0.8 
 
-def keras_process_image(img):
-    
-    image_x = 28
-    image_y = 28
-    img = cv2.resize(img, (1,28,28), interpolation = cv2.INTER_AREA)
-  
-    return img
-
-def crop_image(image, x, y, width, height):
-    return image[y:y + height, x:x + width]
+cap = cv2.VideoCapture(0)
 
 def generate_frames():
-    while True:
+    with mp_hands.Hands(
+        model_complexity=0,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5) as hands:
+        while cap.isOpened():
+
+            # Read feed
+            ret, frame = cap.read()
+
+            # Make detections
+            cropframe=frame[40:400,0:300]
+            # print(frame.shape)
+            frame=cv2.rectangle(frame,(0,40),(300,400),255,2)
+            # frame=cv2.putText(frame,"Active Region",(75,25),cv2.FONT_HERSHEY_COMPLEX_SMALL,2,255,2)
+            image, results = mediapipe_detection(cropframe, hands)
+            # print(results)
             
-        ## read the camera frame
-        success,image_frame=camera.read()
-        if not success:
-            print("not");
-            break
-        else:
-            im2 = crop_image(image_frame, 100,100,300,300)
-            image_grayscale = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
-    
-            image_grayscale_blurred = cv2.GaussianBlur(image_grayscale, (15,15), 0)
-            im3 = cv2.resize(image_grayscale_blurred, (28,28), interpolation = cv2.INTER_AREA)
+            # Draw landmarks
+            # draw_styled_landmarks(image, results)
+            # 2. Prediction logic
+            keypoints = extract_keypoints(results)
+            sequence.append(keypoints)
+            sequence = sequence[-30:]
 
-            im4 = np.resize(im3, (28, 28, 1))
-            im5 = np.expand_dims(im4, axis=0)
+            try: 
+                if len(sequence) == 30:
+                    res = model.predict(np.expand_dims(sequence, axis=0))[0]
+                    print(actions[np.argmax(res)])
+                    predictions.append(np.argmax(res))
+                    
+                    
+                #3. Viz logic
+                    if np.unique(predictions[-10:])[0]==np.argmax(res): 
+                        if res[np.argmax(res)] > threshold: 
+                            if len(sentence) > 0: 
+                                if actions[np.argmax(res)] != sentence[-1]:
+                                    sentence.append(actions[np.argmax(res)])
+                                    accuracy.append(str(res[np.argmax(res)]*100))
+                            else:
+                                sentence.append(actions[np.argmax(res)])
+                                accuracy.append(str(res[np.argmax(res)]*100)) 
 
-            pred_probab, pred_class = keras_predict(model, im5)
-        
-            curr = prediction(pred_class)
-            print(curr)
-            # text_out += curr
+                    if len(sentence) > 1: 
+                        sentence = sentence[-1:]
+                        accuracy=accuracy[-1:]
 
-            cv2.putText(image_frame, curr, (10, 300), cv2.FONT_HERSHEY_COMPLEX, 4.0, (255, 255, 255), lineType=cv2.LINE_AA)
-            #cv2.imshow("Image Resize", image_grayscale_blurred)
+                    # Viz probabilities
+                    # frame = prob_viz(res, actions, frame, colors,threshold)
+            except Exception as e:
+                # print(e)
+                pass
+                
+            cv2.rectangle(frame, (0,0), (300, 40), (245, 117, 16), -1)
+            cv2.putText(frame,"Output: - "+' '.join(sentence)+' '.join(accuracy), (3,30), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            
+            ret,buffer=cv2.imencode('.jpg',frame)
+            frame=buffer.tobytes()
 
-            cv2.rectangle(image_frame, (100, 100), (300, 300), (255, 255, 00), 3)
-            ret,buffer=cv2.imencode('.jpg',image_frame)
-            image_frame=buffer.tobytes()
-
-        yield(b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + image_frame + b'\r\n')
+            yield(b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 @detect.route('/detect', methods=['GET', 'POST'])
 def detects():
-    return render_template("detect.html",user=current_user)
+    out = open(r'stream.py', 'r').read()
+    exec(out)
+    return render_template("home.html",user=current_user)
 
 @detect.route('/video')
 def video():
