@@ -5,7 +5,7 @@ from skimage.transform import resize, pyramid_reduce
 import PIL
 from PIL import Image
 
-model = load_model('CNNmodel.h5')
+model = load_model('CNNRino.h5')
 cam_capture = cv2.VideoCapture(0)
 
 colors = []
@@ -38,6 +38,13 @@ def crop_image(image, x, y, width, height):
     # return image[y:y + height, x:x + width]
     return image[40:400,0:300]
 
+def display_image(image_frame, curr = ""):
+    cv2.rectangle(image_frame, (0,0), (300, 40), (245, 117, 16), -1)
+    cv2.putText(image_frame,"Output: - "+' '.join(curr), (3,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+    #cv2.rectangle(image_frame, (300, 300), (600, 600), (255, 255, 00), 3)
+    cv2.imshow(window_name, image_frame)
+    cv2.setWindowProperty(window_name,cv2.WND_PROP_TOPMOST,1)
 def main():
     l = []
     
@@ -47,6 +54,7 @@ def main():
         im2 = crop_image(image_frame, 300,300,300,300)
 
         image_frame=cv2.rectangle(image_frame,(0,40),(300,400),255,2)
+        display_image(image_frame)
 
         image_grayscale = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
     
@@ -58,25 +66,18 @@ def main():
     
 
         pred_probab, pred_class = keras_predict(model, im5)
-    
         curr = prediction(pred_class)
+        print(pred_probab,pred_class,curr)
+        if pred_probab > 0.75:
+            #cv2.putText(image_frame, curr, (100, 300), cv2.FONT_HERSHEY_COMPLEX, 4.0, (255, 255, 255), lineType=cv2.LINE_AA)
+     
+            # Display cropped image
+            display_image(image_frame,curr)
 
-        print(pred_probab,curr)
-
-        #cv2.putText(image_frame, curr, (100, 300), cv2.FONT_HERSHEY_COMPLEX, 4.0, (255, 255, 255), lineType=cv2.LINE_AA)
- 
-    # Display cropped image
-
-        cv2.rectangle(image_frame, (0,0), (300, 40), (245, 117, 16), -1)
-        cv2.putText(image_frame,"Output: - "+' '.join(curr), (3,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
-        #cv2.rectangle(image_frame, (300, 300), (600, 600), (255, 255, 00), 3)
-        cv2.imshow(window_name, frame)
-        cv2.setWindowProperty(window_name,cv2.WND_PROP_TOPMOST,1)
         
         
     #cv2.imshow("Image4",resized_img)
-        # cv2.imshow("Image3",image_grayscale_blurred)
+        cv2.imshow("Image3",image_grayscale_blurred)
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
